@@ -30,23 +30,21 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-enum UserRole {
-  Admin
-  User
-}
-
 model User {
   id                    String                 @id @default(cuid())
   name                  String?
   email                 String?                @unique
   emailVerified         DateTime?
-  image                 String? // You can use gravatar.com to get image profile
+  image                 String?
   password              String?
-  role                  UserRole               @default(User)
   accounts              Account[]
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+  parties        Party[]            @relation("UserParties")
+  participations PartyParticipant[]
 }
+
+
 
 model VerificationToken {
   id      String   @id @default(cuid())
@@ -80,4 +78,28 @@ model TwoFactorConfirmation {
   userId  String   @unique
   expires DateTime
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Party {
+  id                    String             @id @default(cuid())
+  name                  String
+  description           String?
+  
+  valueForEachParticipant String?
+  createdAt             DateTime           @default(now())
+  slug                  String             @unique
+  creatorId             String
+  creator               User               @relation("UserParties", fields: [creatorId], references: [id])
+  participants          PartyParticipant[]
+}
+
+model PartyParticipant {
+  id      String   @id @default(cuid())
+  partyId String
+  userId  String
+  paid    Boolean? @default(false)
+  user    User     @relation(fields: [userId], references: [id])
+  party   Party    @relation(fields: [partyId], references: [id])
+
+  @@unique([partyId, userId]) 
 }

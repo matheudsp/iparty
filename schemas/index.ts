@@ -25,6 +25,37 @@ export const registerSchema = z.object({
     .min(6, "Password must be at least 6 characters."),
 });
 
+export const partySchema = z.object({
+  name: z
+    .string()
+    .min(1, {
+      message: "Name is required.",
+    })
+    .min(4, "Name must be at least 4 characters.")
+    .max(24, "Maximum length of Name is 24 characters."),
+  description: z.optional(
+    z
+      .string()
+      .max(120, "Maximum length of Description is 120 characters."),
+  ),
+  valueForEachParticipant: z
+    .string()
+    .refine((val) => {
+      const parsedValue = parseFloat(val);
+      return !isNaN(parsedValue) && parsedValue > 0;
+    }, {
+      message: "O valor deve ser um número válido maior que zero",
+    })
+    .refine((val) => {
+      // Verifica se é um número inteiro ou decimal válido
+      const parsedValue = parseFloat(val);
+      return Number.isFinite(parsedValue);
+    }, {
+      message: "O valor deve ser um número válido",
+    }),
+});
+
+
 export const resendSchema = z.object({
   email: EMAIL_SCHEMA,
 });

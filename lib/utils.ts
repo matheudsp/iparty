@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { sign, verify, type SignOptions, type Secret } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { Response, ResponseWithMessage } from "@/types";
+import { db } from "./db";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -64,4 +65,38 @@ export function response(response: ResponseWithMessage): Response;
 export function response<T extends Record<string, unknown>>(response: Response<T>): Response<T>;
 export function response<T extends object>(response: T): T {
   return response;
+}
+
+export async function generateSlug(name: string): Promise<string> {
+  const randomSuffix = () => {
+    return Math.random().toString(36).substring(2, 2 + suffixLength)
+  }
+
+  let suffixLength = 4
+  let slug = name.
+    toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+  let uniqueSlug = slug + '-' + randomSuffix();
+
+ 
+
+  async function doesSlugExist(slug: string): Promise<boolean> {
+    const party = await db.party.findUnique({
+      where: { slug },
+    });
+    return party ? true : false;
+  }
+
+  // Verifica se o slug já existe no banco de dados
+  while (await doesSlugExist(uniqueSlug)) {
+    suffixLength++;
+    uniqueSlug = slug + '-' + randomSuffix();
+  }
+
+
+  return uniqueSlug;
 }
