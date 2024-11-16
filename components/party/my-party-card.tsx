@@ -28,6 +28,7 @@ import { VStack } from "../ui/vstack";
 import { iParty } from "@/app/(main)/my-parties/page";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
+import { UpdatePartyForm } from "./update-party-form";
 
 interface iPartyCard extends iParty {
     handleDelete: (id: string) => void
@@ -61,10 +62,7 @@ export const MyPartyCard = ({ id, name, description, slug, handleDelete }: iPart
                   
                 </CardContent> */}
             < CardFooter className="p-2 flex justify-center" >
-                <Button variant="ghost" className="gap-2" onClick={() => null}>
-                    <Pencil size={16} className="" />
-                    Editar
-                </Button>
+                <UpdatePartyForm />
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button variant="ghost" className="gap-2">

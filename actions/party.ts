@@ -5,7 +5,7 @@ import { partySchema } from "@/schemas";
 import { response } from "@/lib/utils";
 
 import { currentUser } from "@/lib/auth";
-import { createParty, getPartiesByCreator, getPartiesFromCreatorByName, getPartyById, getPartyBySlug, removeParty } from "@/services/party";
+import { addParticipantToParty, createParty, getPartiesByCreator, getPartiesFromCreatorByName, getPartyById, getPartyBySlug, removeParty, verifyCreatorParty, verifyParticipant } from "@/services/party";
 
 export const newParty = async (party: z.infer<typeof partySchema>) => {
   const user = await currentUser();
@@ -53,6 +53,64 @@ export const newParty = async (party: z.infer<typeof partySchema>) => {
   });
 };
 
+export const addParticipant = async (partyId: string) => {
+  const user = await currentUser();
+
+  if (!user) {
+    return response({
+      success: false,
+      error: {
+        code: 401,
+        message: "Unauthorized.",
+      },
+    });
+  }
+
+
+
+  const party = await getPartyById(partyId)
+  if (!party) {
+    return response({
+      success: false,
+      error: {
+        code: 404,
+        message: "Party not found.",
+      },
+    });
+  }
+
+  const verification = await verifyCreatorParty(user.id, partyId)
+  if (verification) {
+    return response({
+      success: false,
+      error: {
+        code: 500,
+        message: 'O anfitrião não pode se inscrever no seu próprio evento.'
+      }
+    })
+  }
+
+  const alreadyAdded = await verifyParticipant(user.id, partyId)
+  if (alreadyAdded) {
+    return response({
+      success: false,
+      error: {
+        code: 404,
+        message: 'Você já está participando!'
+      }
+    })
+  }
+
+
+  await addParticipantToParty(user.id, partyId)
+  return response({
+    success: true,
+    code: 200,
+    message: "Você foi adicionado a festa!"
+  });
+
+}
+
 export const deleteParty = async (id: string) => {
   const party = await getPartyById(id)
 
@@ -71,11 +129,11 @@ export const deleteParty = async (id: string) => {
   return response({
     success: true,
     code: 200,
-    message:"Party deleted successfully."
+    message: "Party deleted successfully."
   });
 }
 
-export const findPartyBySlug = async (slug:string) => {
+export const findPartyBySlug = async (slug: string) => {
   const party = await getPartyBySlug(slug)
 
   if (!party) {
@@ -97,7 +155,7 @@ export const findPartyBySlug = async (slug:string) => {
 
 export const findAllByCreator = async () => {
   const user = await currentUser();
-  
+
   // Verifica se o usuário está autenticado
   if (!user) {
     return response({

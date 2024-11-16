@@ -1,10 +1,14 @@
 import { Squirrel } from 'lucide-react';
+
 interface iLogo {
     size?:number
+    className?: string
 }
-const Logo = ({size}:iLogo) => {
+const Logo = ({size, className}:iLogo) => {
   return (
-    <Squirrel size={size}/>
+    <Squirrel
+      className={`${className}`}
+     size={size} />
   );
 };
 

@@ -3,5 +3,9 @@ export const metadata = {
 };
 
 export default function PartyLayout({ children }: { children: React.ReactNode }) {
-    return <>{children}</>;
+    return (
+        <div className="flex flex-col items-center justify-center">
+            {children}
+        </div>
+    )
 }

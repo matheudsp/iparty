@@ -23,6 +23,49 @@ export const createParty = async (userId: string, party: z.infer<typeof partySch
     }
 };
 
+export const verifyCreatorParty = async (userId: string, partyId: string) => {
+    try {
+        const verification = await db.party.findFirst({
+            where:{
+                id: partyId,
+                creatorId: userId
+            }
+        })
+        return verification
+    } catch {
+        return null
+    }
+}
+
+export const verifyParticipant = async (userId: string, partyId: string) => {
+    try{
+        const participant = await db.partyParticipant.findFirst({
+            where:{
+                partyId: partyId,
+                userId: userId
+            }
+        })
+        return participant
+    }catch {
+        return null
+    }
+}
+
+export const addParticipantToParty = async (userId: string, partyId: string) => {
+    try {
+        
+        const party = await db.partyParticipant.create({
+            data: {
+                partyId: partyId,
+                userId: userId
+            }
+        })
+        return party
+    } catch {
+        return null
+    }
+}
+
 export const getPartiesFromCreatorByName = async (userId: string, name: string) => {
     try {
         const party = await db.party.findFirst({
@@ -63,7 +106,25 @@ export const getPartyById = async (id: string) => {
 
 export const getPartyBySlug = async (slug: string) => {
     try {
-        const party = await db.party.findUnique({ where: { slug } });
+        const party = await db.party.findUnique({
+            where: { slug },
+            include: {
+                creator: {
+                    select:{
+                        name:true
+                    }
+                },
+                participants: {
+                    include: {
+                        user: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         return party;
     } catch {

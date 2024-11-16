@@ -1,5 +1,4 @@
 "use client"
-
 import {
     Dialog,
     DialogContent,
@@ -9,44 +8,38 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-
-
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { partySchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { z } from "zod";
 import { newParty } from "@/actions/party";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Form } from "../ui/form";
 import { FormInput } from "@/components/party/form-input";
+import { Pencil } from "lucide-react"
 
-import { PartyFormToggle } from "../party/party-form-toggle"
-
-interface CreatePartyFormProps {
-    onPartyCreated: () => void;
-    dialogState: boolean
-    dialogHandler: (state: boolean) => void;
+interface UpdatePartyFormProps {
+    onPartyCreated?: () => void;
+    dialogState?: boolean
+    dialogHandler?: (state: boolean) => void;
 }
 
-export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
+export const UpdatePartyForm: React.FC<UpdatePartyFormProps> = ({
     dialogHandler,
     dialogState,
     onPartyCreated }) => {
-
-    const router = useRouter();
-
     const [isPending, startTransition] = useTransition()
     const form = useForm<z.infer<typeof partySchema>>({
         resolver: zodResolver(partySchema),
         defaultValues: {
             name: "",
             description: "",
-            isPaymentActive: false,
             valueForEachParticipant: "",
-            pixKey: ""
         },
     });
 
@@ -56,48 +49,43 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
                 if (data.success) {
                     // router.push(`/party/${slug}`)
                     toast.success(data.message);
-                    onPartyCreated();
-                    dialogHandler(false)
+
+
                     form.reset();
                 } else {
                     toast.error(data.error.message);
-                    dialogHandler(false)
+
                 }
 
             });
         });
     });
-
-    const onOpenChange = () => {
-        dialogHandler(!dialogState)
-        form.reset();
-    }
-
     return (
-        <Dialog open={dialogState} onOpenChange={onOpenChange}>
+        <Dialog open={dialogState} onOpenChange={dialogHandler}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                    Adicionar Festa
+                <Button variant="ghost" className="gap-2">
+                    <Pencil size={16} className="" />
+                    Editar
                 </Button>
 
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Criar festa</DialogTitle>
+                    <DialogTitle>Editar festa</DialogTitle>
                     <DialogDescription>
-                        Preencha todos os campos e pressione "Criar" quando terminar.
+                        Preencha todos os campos e pressione "Salvar" quando terminar.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={handleSubmit}>
-                        <div className="grid gap-4">
+                        <div className="grid gap-4 py-4">
                             <FormInput
                                 control={form.control}
                                 name="name"
                                 label="Name"
                                 autoComplete="off"
                                 type="text"
-                                placeholder="Ex: Social na minha casa"
+                                placeholder="Social na minha casa"
                                 isPending={isPending}
                             />
 
@@ -107,49 +95,31 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
                                 label="Descrição"
                                 autoComplete="off"
                                 type="text"
-                                placeholder="Ex: Sem bebidas alcoólicas"
+                                placeholder="Traga sua bebida!"
                                 isPending={isPending}
                             />
 
-                            <PartyFormToggle
+                            <FormInput
                                 control={form.control}
-                                name="isPaymentActive"
-                                label="Aceitar pagamentos"
-                                description="Gerencie os valores da festa pela plataforma. Você será solicitado a inserir sua chave PIX para receber."
+                                name="valueForEachParticipant"
+                                label="Cada participante pagará"
+                                autoComplete="off"
+                                type="number"
+                                placeholder="50"
                                 isPending={isPending}
                             />
-                            {form.watch("isPaymentActive") && (
-                                <>
-                                    <FormInput
-                                        control={form.control}
-                                        name="valueForEachParticipant"
-                                        label="Cada participante pagará"
-                                        autoComplete="off"
-                                        type="number"
-                                        placeholder="Ex: 25,00"
-
-                                        isPending={isPending}
-                                    />
-                                    <FormInput
-                                        control={form.control}
-                                        name="pixKey"
-                                        label="Chave PIX"
-                                        autoComplete="off"
-                                        type="number"
-                                        placeholder="Sua chave PIX"
-                                        isPending={isPending}
-                                    />
-                                </>
-                            )}
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="payment-mode" className="text-right">Aceitar pagamentos</Label>
+                                <Switch id="payment-mode" />
+                            </div>
                         </div>
 
-                        <DialogFooter className="pt-4 flex items-end">
-                            <Button type="submit" className="w-[50%] md:w-[100%]" size={'default'}>Criar</Button>
+                        <DialogFooter>
+                            <Button type="submit">Salvar</Button>
                         </DialogFooter>
                     </form>
                 </Form>
             </DialogContent>
         </Dialog>
-
     )
-}
+} 

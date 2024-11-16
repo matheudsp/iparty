@@ -17,6 +17,7 @@ import { signOut } from "@/auth";
 import Link from "next/link";
 import { currentUser } from "@/lib/auth";
 import MobileMenu from "@/components/ui/mobile-menu";
+import { cn } from "@/lib/utils";
 
 async function AuthNav() {
   const user = await currentUser();
@@ -26,9 +27,9 @@ async function AuthNav() {
   return (
     <>
       {/* Desktop Menu*/}
-      <div className="hidden md:flex ">
+      <div className="hidden md:flex h-full">
         < DropdownMenu >
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild className="h-full">
             <Button variant="ghost" className="pr-4 rounded-none h-fit flex gap-x-2 focus-visible:ring-offset-0">
               <Avatar className="w-8 h-8">
                 <AvatarImage src={user.image ?? ""} />
@@ -96,10 +97,14 @@ async function AuthNav() {
   );
 }
 
-export default function Navbar() {
+interface NavbarProps {
+  className?: string;
+}
+
+export default function Navbar({ className }: NavbarProps) {
   return (
-    <nav className="flex gap-x-4 border-b items-center justify-between shadow-sm md:pl-8 px-4 md:px-0 h-14 ">
-      <Link href="/">
+    <nav className={cn("flex gap-x-4 border-b items-center justify-between shadow-sm md:pl-8 px-4 h-14", className)}>
+      <Link href="/" >
         <h1 className="text-2xl font-semibold">iParty</h1>
       </Link>
       <AuthNav />

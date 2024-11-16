@@ -17,18 +17,19 @@ export const FormInput = <T extends FieldValues>(props: FormInputProps<T>) => {
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <FormItem className="grid grid-cols-4 items-center gap-x-4">
-          <FormLabel className="text-right col-span-1">{label}</FormLabel>
+        <FormItem className="grid grid-cols-4 auto-rows-[0.1fr] md:auto-rows-[min-content] justify-center  items-center gap-x-2 ">
+          <FormLabel className="text-left md:text-right col-span-4 md:col-span-1 ">{label}</FormLabel>
 
-          <FormControl className="flex-col flex">
+          <FormControl className="flex-col col-span-4 md:col-span-3">
             <>
               <Input
                 {...field}
                 {...rest}
-                className={`${cn(fieldState.error && "border-red-500")} col-span-3`}
+                className={`${cn(fieldState.error && "border-red-500")} col-span-4 md:col-span-3 `}
                 disabled={isPending || disabled}
               />
-              <FormMessage className="text-xs col-span-3 col-start-2 " />
+              
+              <FormMessage className="text-xs col-span-4 md:col-span-3 md:col-start-2" />
             </>
           </FormControl>
         </FormItem>
