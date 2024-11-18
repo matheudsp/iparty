@@ -8,54 +8,62 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
+
 import { Button } from "@/components/ui/button"
 import { partySchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useTransition, useState } from "react";
 import { z } from "zod";
-import { newParty } from "@/actions/party";
+import { updateParty } from "@/actions/party";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+
 import { Form } from "../ui/form";
 import { FormInput } from "@/components/party/form-input";
 import { Pencil } from "lucide-react"
+import { PartyFormToggle } from "./party-form-toggle"
+import { iParty } from "@/app/(main)/my-parties/page";
+
+
+
+import { LoaderPinwheel } from "./loaderSpinWheel";
+
 
 interface UpdatePartyFormProps {
-    onPartyCreated?: () => void;
+    party: iParty
+    onPartyUpdated: () => void;
     dialogState?: boolean
     dialogHandler?: (state: boolean) => void;
 }
 
 export const UpdatePartyForm: React.FC<UpdatePartyFormProps> = ({
+    party,
     dialogHandler,
     dialogState,
-    onPartyCreated }) => {
+    onPartyUpdated }) => {
     const [isPending, startTransition] = useTransition()
+    
+
     const form = useForm<z.infer<typeof partySchema>>({
         resolver: zodResolver(partySchema),
-        defaultValues: {
-            name: "",
-            description: "",
-            valueForEachParticipant: "",
+        mode: "onChange",
+        values: {
+            name: party.name,
+            description: party.description,
+            isPaymentActive: party.isPaymentActive,
+            valueForEachParticipant: party.valueForEachParticipant,
         },
     });
 
     const handleSubmit = form.handleSubmit((values) => {
         startTransition(() => {
-            newParty(values).then((data) => {
+            updateParty(party.id, values).then((data) => {
                 if (data.success) {
-                    // router.push(`/party/${slug}`)
-                    toast.success(data.message);
-
-
-                    form.reset();
-                } else {
-                    toast.error(data.error.message);
-
+                    onPartyUpdated()
+                    dialogHandler?.(false);
+                    return toast.success(data.message);
                 }
+                return toast.error(data.error.message);
 
             });
         });
@@ -71,7 +79,7 @@ export const UpdatePartyForm: React.FC<UpdatePartyFormProps> = ({
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Editar festa</DialogTitle>
+                    <DialogTitle>Editar festa - {party.name}</DialogTitle>
                     <DialogDescription>
                         Preencha todos os campos e pressione "Salvar" quando terminar.
                     </DialogDescription>
@@ -85,7 +93,7 @@ export const UpdatePartyForm: React.FC<UpdatePartyFormProps> = ({
                                 label="Name"
                                 autoComplete="off"
                                 type="text"
-                                placeholder="Social na minha casa"
+                                placeholder="Ex: Social na minha casa"
                                 isPending={isPending}
                             />
 
@@ -95,27 +103,46 @@ export const UpdatePartyForm: React.FC<UpdatePartyFormProps> = ({
                                 label="Descrição"
                                 autoComplete="off"
                                 type="text"
-                                placeholder="Traga sua bebida!"
+                                placeholder="Ex: Sem bebidas alcoólicas"
                                 isPending={isPending}
                             />
-
-                            <FormInput
+                            <PartyFormToggle
                                 control={form.control}
-                                name="valueForEachParticipant"
-                                label="Cada participante pagará"
-                                autoComplete="off"
-                                type="number"
-                                placeholder="50"
+                                name="isPaymentActive"
+                                label="Aceitar pagamentos"
+                                description="Receba e gerencie os valores da festa pela plataforma."
                                 isPending={isPending}
                             />
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="payment-mode" className="text-right">Aceitar pagamentos</Label>
-                                <Switch id="payment-mode" />
-                            </div>
+                            {form.watch("isPaymentActive") && (
+                                <>
+                                    <FormInput
+                                        control={form.control}
+                                        name="valueForEachParticipant"
+                                        label="Cada participante pagará"
+                                        autoComplete="off"
+                                        type="number"
+                                        placeholder="Ex: 25,00"
+
+                                        isPending={isPending}
+                                    />
+                                    <FormInput
+                                        control={form.control}
+                                        name="pixKey"
+                                        label="Chave PIX"
+                                        autoComplete="off"
+                                        type="number"
+                                        placeholder="Sua chave PIX"
+                                        isPending={isPending}
+                                    />
+                                </>
+                            )}
+
                         </div>
 
                         <DialogFooter>
-                            <Button type="submit">Salvar</Button>
+                            <Button type="submit" disabled={isPending}>
+                                {isPending ? (<LoaderPinwheel />) : "Salvar"}
+                            </Button>
                         </DialogFooter>
                     </form>
                 </Form>

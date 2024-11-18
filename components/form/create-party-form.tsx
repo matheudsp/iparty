@@ -115,7 +115,7 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
                                 control={form.control}
                                 name="isPaymentActive"
                                 label="Aceitar pagamentos"
-                                description="Gerencie os valores da festa pela plataforma. Você será solicitado a inserir sua chave PIX para receber."
+                                description="Receba e gerencie os valores da festa pela plataforma."
                                 isPending={isPending}
                             />
                             {form.watch("isPaymentActive") && (

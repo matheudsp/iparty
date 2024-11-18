@@ -27,15 +27,15 @@ import { VStack } from "../ui/vstack";
 
 import { iParty } from "@/app/(main)/my-parties/page";
 import Link from "next/link";
-import { Skeleton } from "../ui/skeleton";
+
 import { UpdatePartyForm } from "./update-party-form";
 
 interface iPartyCard extends iParty {
     handleDelete: (id: string) => void
-
+    onPartyUpdated: () => void
 }
 
-export const MyPartyCard = ({ id, name, description, slug, handleDelete }: iPartyCard,) => {
+export const MyPartyCard = ({ id, name, description, slug, isPaymentActive, valueForEachParticipant, handleDelete,onPartyUpdated }: iPartyCard,) => {
     return (
 
 
@@ -62,7 +62,7 @@ export const MyPartyCard = ({ id, name, description, slug, handleDelete }: iPart
                   
                 </CardContent> */}
             < CardFooter className="p-2 flex justify-center" >
-                <UpdatePartyForm />
+                <UpdatePartyForm  onPartyUpdated={onPartyUpdated} party={{id,slug, name, description, isPaymentActive,valueForEachParticipant}}/>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button variant="ghost" className="gap-2">

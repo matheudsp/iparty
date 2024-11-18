@@ -17,6 +17,8 @@ export interface iParty {
   description?: string;
   slug: string;
   status?: boolean;
+  isPaymentActive: boolean,
+  valueForEachParticipant: string
 }
 
 export default function Page() {
@@ -87,6 +89,7 @@ export default function Page() {
                 key={party.id}
                 {...party}
                 handleDelete={handleDeleteParty}
+                onPartyUpdated={handleRefresh}
               />
 
             ))}

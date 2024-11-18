@@ -1,11 +1,10 @@
 "use server";
 
 import { z } from "zod";
-import { partySchema } from "@/schemas";
+import { partySchema, profileSchema } from "@/schemas";
 import { response } from "@/lib/utils";
-import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
-import { addParticipantToParty, createParty, findBySlug, getPartiesByCreator, getPartiesFromCreatorByName, getPartyById, getPartyBySlug, removeParty, verifyCreatorParty, verifyParticipant } from "@/services/party";
+import { addParticipantToParty, createParty, findBySlug, getPartiesByCreator, getPartiesFromCreatorByName, getPartyById, getPartyBySlug, removeParty, updatePartyById, verifyCreatorParty, verifyParticipant } from "@/services/party";
 
 export const newParty = async (party: z.infer<typeof partySchema>) => {
   const user = await currentUser();
@@ -230,3 +229,46 @@ export const findAllByCreator = async () => {
     data: parties,
   });
 };
+
+export const updateParty = async (partyId: string, payload: z.infer<typeof profileSchema>) => {
+
+  const validatedFields = partySchema.safeParse(payload);
+
+  if (!validatedFields.success) {
+    return response({
+      success: false,
+      error: {
+        code: 422,
+        message: "Invalid fields.",
+      },
+
+    })
+
+  }
+
+  let { name, description, isPaymentActive, pixKey, valueForEachParticipant } = validatedFields.data
+
+  const user = await currentUser();
+  if (!user) {
+    return response({
+      success: false,
+      error: {
+        code: 401,
+        message: "Unauthorized.",
+      },
+    });
+  }
+
+  await updatePartyById(partyId, {
+    name,
+    description,
+    isPaymentActive,
+    valueForEachParticipant,
+  })
+
+  return response({
+    success: true,
+    code: 204,
+    message: "Evento atualizado.",
+  });
+}
