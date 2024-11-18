@@ -12,7 +12,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { ButtonAddParticipant } from '@/components/party/button-add-participant'
+import { ButtonAddParticipant } from '@/components/party/add-participant/button-add-participant'
 
 import { ParticipantsTable } from '@/components/party/participants-table'
 

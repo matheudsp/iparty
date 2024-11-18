@@ -53,7 +53,21 @@ export const newParty = async (party: z.infer<typeof partySchema>) => {
   });
 };
 
-export const addParticipant = async (partySlug: string) => {
+type AddParticipantResponse = {
+  success: boolean;
+  code?: number;
+  message?: string;
+  error?: {
+    code: number;
+    message: string;
+  };
+};
+
+
+export const addParticipant = async (
+  partySlug: string,
+  paymentMethod?: 'Card' | 'Pix'
+): Promise<AddParticipantResponse> => {
   const user = await currentUser();
 
   if (!user) {
@@ -105,18 +119,36 @@ export const addParticipant = async (partySlug: string) => {
     });
   }
 
-  // Redireciona para pagamento se a festa requer pagamento
-  if (party.isPaymentActive) {
-    return redirect(`/party/${party.slug}/checkout?slug=${party.slug}`);
-  } else {
-    const isPaid = false
-    await addParticipantToParty(user?.id!, partySlug)
-    return response({
-      success: true,
-      code: 200,
-      message: "Você foi adicionado à festa com sucesso!",
-    });
+  //  Verifica se a festa requer pagamento
+  if (party.isPaymentActive && paymentMethod) {
+    if (paymentMethod === 'Card') {
+      return {
+        success: false,
+        error: {
+          code: 302, // Indica redirecionamento
+          message: "Redirecionando para o checkout...",
+        },
+      };
+    }
+    if (paymentMethod === 'Pix') {
+      return {
+        success: false,
+        error: {
+          code: 501, // Indica funcionalidade não implementada
+          message: "Pagamento via Pix ainda não implementado.",
+        },
+      };
+    }
   }
+
+
+  await addParticipantToParty(user?.id!, partySlug);
+
+  return response({
+    success: true,
+    code: 200,
+    message: "Você foi adicionado à festa com sucesso!",
+  });
 
 };
 
@@ -128,7 +160,7 @@ export const deleteParty = async (id: string) => {
       success: false,
       error: {
         code: 404,
-        message: "No parties found.",
+        message: "Evento não encontrado.",
       },
     });
   }
