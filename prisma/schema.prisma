@@ -35,16 +35,16 @@ model User {
   name                  String?
   email                 String?                @unique
   emailVerified         DateTime?
+  stripeCustomerId      String?                @unique
+  isActive              Boolean                @default(false)
   image                 String?
   password              String?
   accounts              Account[]
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
-  parties        Party[]            @relation("UserParties")
-  participations PartyParticipant[]
+  parties               Party[]                @relation("UserParties")
+  participations        PartyParticipant[]
 }
-
-
 
 model VerificationToken {
   id      String   @id @default(cuid())
@@ -81,25 +81,25 @@ model TwoFactorConfirmation {
 }
 
 model Party {
-  id                    String             @id @default(cuid())
-  name                  String
-  description           String?
-  
+  id                      String             @id @default(cuid())
+  name                    String
+  description             String?
+  isPaymentActive         Boolean            @default(false)
   valueForEachParticipant String?
-  createdAt             DateTime           @default(now())
-  slug                  String             @unique
-  creatorId             String
-  creator               User               @relation("UserParties", fields: [creatorId], references: [id])
-  participants          PartyParticipant[]
+  createdAt               DateTime           @default(now())
+  slug                    String             @unique
+  creatorId               String
+  creator                 User               @relation("UserParties", fields: [creatorId], references: [id])
+  participants            PartyParticipant[]
 }
 
 model PartyParticipant {
   id      String   @id @default(cuid())
   partyId String
   userId  String
-  paid    Boolean? @default(false)
+  isPaid    Boolean? @default(false)
   user    User     @relation(fields: [userId], references: [id])
   party   Party    @relation(fields: [partyId], references: [id])
 
-  @@unique([partyId, userId]) 
+  @@unique([partyId, userId])
 }

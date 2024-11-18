@@ -14,13 +14,7 @@ export default async function Home() {
       Hello {user?.name}
       
 
-      <Link
-        href="/donate-with-checkout"
-        className="card elements-style-background"
-      >
-        <Button>Donate with checkout</Button>
-
-      </Link>
+   
     </div>
   )
 }

@@ -3,9 +3,9 @@
 import { z } from "zod";
 import { partySchema } from "@/schemas";
 import { response } from "@/lib/utils";
-
+import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
-import { addParticipantToParty, createParty, getPartiesByCreator, getPartiesFromCreatorByName, getPartyById, getPartyBySlug, removeParty, verifyCreatorParty, verifyParticipant } from "@/services/party";
+import { addParticipantToParty, createParty, findBySlug, getPartiesByCreator, getPartiesFromCreatorByName, getPartyById, getPartyBySlug, removeParty, verifyCreatorParty, verifyParticipant } from "@/services/party";
 
 export const newParty = async (party: z.infer<typeof partySchema>) => {
   const user = await currentUser();
@@ -30,7 +30,7 @@ export const newParty = async (party: z.infer<typeof partySchema>) => {
       },
     });
   }
-  const { name, description, valueForEachParticipant } = validatedFields.data;
+  const { name, description, valueForEachParticipant, isPaymentActive } = validatedFields.data;
 
   // Check if user already exist, then return an error.
   const existingParty = await getPartiesFromCreatorByName(user.id, name);
@@ -44,7 +44,7 @@ export const newParty = async (party: z.infer<typeof partySchema>) => {
     });
   }
 
-  await createParty(user.id, { name, description, valueForEachParticipant })
+  await createParty(user.id, { name, description, valueForEachParticipant, isPaymentActive })
 
   return response({
     success: true,
@@ -53,7 +53,7 @@ export const newParty = async (party: z.infer<typeof partySchema>) => {
   });
 };
 
-export const addParticipant = async (partyId: string) => {
+export const addParticipant = async (partySlug: string) => {
   const user = await currentUser();
 
   if (!user) {
@@ -66,50 +66,59 @@ export const addParticipant = async (partyId: string) => {
     });
   }
 
+  // Busca a festa pelo slug
+  const party = await findBySlug(partySlug);
 
-
-  const party = await getPartyById(partyId)
   if (!party) {
     return response({
       success: false,
       error: {
         code: 404,
-        message: "Party not found.",
+        message: "Evento não encontrado.",
       },
     });
   }
 
-  const verification = await verifyCreatorParty(user.id, partyId)
-  if (verification) {
+  // Verifica se o usuário é o criador da festa
+  const isCreator = await verifyCreatorParty(user.id, party.id);
+
+  if (isCreator) {
     return response({
       success: false,
       error: {
-        code: 500,
-        message: 'O anfitrião não pode se inscrever no seu próprio evento.'
-      }
-    })
+        code: 403,
+        message: "O anfitrião não pode se inscrever no seu próprio evento.",
+      },
+    });
   }
 
-  const alreadyAdded = await verifyParticipant(user.id, partyId)
+  // Verifica se o usuário já está na festa
+  const alreadyAdded = await verifyParticipant(user.id, party.id);
+
   if (alreadyAdded) {
     return response({
       success: false,
       error: {
-        code: 404,
-        message: 'Você já está participando!'
-      }
-    })
+        code: 410,
+        message: "Você já está participando!",
+      },
+    });
   }
 
+  // Redireciona para pagamento se a festa requer pagamento
+  if (party.isPaymentActive) {
+    return redirect(`/party/${party.slug}/checkout?slug=${party.slug}`);
+  } else {
+    const isPaid = false
+    await addParticipantToParty(user?.id!, partySlug)
+    return response({
+      success: true,
+      code: 200,
+      message: "Você foi adicionado à festa com sucesso!",
+    });
+  }
 
-  await addParticipantToParty(user.id, partyId)
-  return response({
-    success: true,
-    code: 200,
-    message: "Você foi adicionado a festa!"
-  });
-
-}
+};
 
 export const deleteParty = async (id: string) => {
   const party = await getPartyById(id)

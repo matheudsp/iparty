@@ -1,7 +1,6 @@
 import { loginSchema } from "@/schemas";
 import { getUserByEmail } from "@/services/user";
 import Credentials from "next-auth/providers/credentials";
-// import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 
@@ -24,10 +23,6 @@ export const CredentialsProvider = Credentials({
   },
 });
 
-// export const GithubProvider = Github({
-//   clientId: process.env.GITHUB_ID as string,
-//   clientSecret: process.env.GITHUB_SECRET as string,
-// });
 
 export const GoogleProvider = Google({
   clientId: process.env.GOOGLE_ID as string,

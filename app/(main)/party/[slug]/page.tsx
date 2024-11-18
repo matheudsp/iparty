@@ -17,6 +17,7 @@ import { ButtonAddParticipant } from '@/components/party/button-add-participant'
 import { ParticipantsTable } from '@/components/party/participants-table'
 
 import { ShareButton } from '@/components/party/share-button'
+import { currentUser } from '@/lib/auth'
 
 async function fetchParty(slug: string) {
 
@@ -88,24 +89,29 @@ export default async function Page({
 
             <VStack className="space-y-2 w-full p-4  bg-white border-t">
               <h2 className="text-lg font-semibold text-gray-700">Informações da Festa</h2>
-              <HStack className='justify-between text-base font-normal'>
-                <p className="text-gray-600">Valor por Participante </p>
-                <p className=''>{party.valueForEachParticipant} <span className='text-xs font-semibold'>BRL</span></p>
-              </HStack>
+              {(party.valueForEachParticipant && party.isPaymentActive) &&
+                <HStack className='justify-between text-base font-normal'>
+                  <p className="text-gray-600">Valor por Participante </p>
+                  <p className=''>{party.valueForEachParticipant} <span className='text-xs font-semibold'>BRL</span></p>
+                </HStack>}
             </VStack>
 
           </VStack>
         </TabsContent>
         <TabsContent value="participants">
-          <ParticipantsTable creatorId={party.creatorId} creatorName={party.creator.name} participants={party.participants} />
+          <ParticipantsTable isPaymentActive={party.isPaymentActive} creatorId={party.creatorId} creatorName={party.creator.name} participants={party.participants} />
         </TabsContent>
       </Tabs>
       <HStack className="bottom-0 w-full gap-4 p-4 border-t justify-between   items-center ">
         <ShareButton slug={party.slug} />
-        <ButtonAddParticipant className='w-[40%] md:w-[20%]' size='lg' partyId={party.id} />
+        <ButtonAddParticipant
+          partySlug={slug}
+          isPaymentActive={party.isPaymentActive}
+          size='lg'
+        />
       </HStack>
 
-    </VStack>
+    </VStack >
 
   );
 }

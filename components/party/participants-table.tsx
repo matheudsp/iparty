@@ -19,47 +19,49 @@ interface iParticipantTable {
     participants: any[]
     creatorName: string
     creatorId: string
+    isPaymentActive: boolean
 }
 
-export async function ParticipantsTable({ participants, creatorName, creatorId }: iParticipantTable
+export async function ParticipantsTable({ isPaymentActive, participants, creatorName, creatorId }: iParticipantTable
 ) {
     const user = await currentUser()
     return (
         <ScrollArea className="w-full h-[52vh] md:h-[56vh]">
-            <Table>
+            <Table >
                 <TableCaption>Lista de participantes recentes.
                 </TableCaption>
-                <TableHeader >
+                <TableHeader className="w-full">
                     <TableRow >
                         <TableHead >Participante</TableHead>
-                        <TableHead >Status</TableHead>
+                        {isPaymentActive && <TableHead >Status</TableHead>}
+
                     </TableRow>
                 </TableHeader>
                 <TableBody className="w-full">
                     <TableRow className="w-full">
                         <TableCell className={`font-medium ${creatorId === user?.id && 'text-blue-500'}`}>{creatorId == user?.id ? (creatorName + ' (Você)') : (creatorName + ' (Anfitrião)')} </TableCell>
-
-
                     </TableRow>
                     {participants.map((participant) => (
-                        
-                        
+
+
                         <TableRow key={participant.id} className="w-full">
                             <TableCell className={`font-medium`}>
                                 {participant.id === user?.id ? `${participant.user.name} (Você)` : (participant.user.name)}
                             </TableCell>
-                            <TableCell className={`${participant.paid ? "text-green-500" : "text-red-500"} text-sm font-medium `}>{participant.paid ? (
-                                'Pago'
-                            ) : (
-                                'Não Pago'
-                            )}</TableCell>
+                            {isPaymentActive &&
+                                <TableCell className={`${participant.isPaid ? "text-green-500" : "text-red-500"} text-sm font-medium `}>{participant.isPaid ? (
+                                    'Pago'
+                                ) : (
+                                    'Não Pago'
+                                )}</TableCell>}
+
                         </TableRow>
-                       
+
 
 
 
                     ))}
-                    
+
                 </TableBody>
                 <TableFooter className="w-full">
                     <TableRow className="">

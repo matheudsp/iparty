@@ -24,13 +24,15 @@ export const createParty = async (userId: string, party: z.infer<typeof partySch
 };
 
 export const verifyCreatorParty = async (userId: string, partyId: string) => {
+
     try {
         const verification = await db.party.findFirst({
-            where:{
+            where: {
                 id: partyId,
                 creatorId: userId
             }
         })
+
         return verification
     } catch {
         return null
@@ -38,29 +40,35 @@ export const verifyCreatorParty = async (userId: string, partyId: string) => {
 }
 
 export const verifyParticipant = async (userId: string, partyId: string) => {
-    try{
+    try {
         const participant = await db.partyParticipant.findFirst({
-            where:{
+            where: {
                 partyId: partyId,
                 userId: userId
             }
         })
         return participant
-    }catch {
+    } catch {
         return null
     }
 }
 
-export const addParticipantToParty = async (userId: string, partyId: string) => {
+export const addParticipantToParty = async (userId: string, slug: string, isPaid?: boolean) => {
     try {
-        
+
+        const findbySlug = await db.party.findUnique({
+            where: { slug: slug }
+        })
+
         const party = await db.partyParticipant.create({
             data: {
-                partyId: partyId,
-                userId: userId
+                partyId: findbySlug.id,
+                userId: userId,
+                isPaid: isPaid
             }
         })
         return party
+
     } catch {
         return null
     }
@@ -104,14 +112,25 @@ export const getPartyById = async (id: string) => {
     }
 };
 
+export const findBySlug = async (slug: string) => {
+    try {
+        const party = await db.party.findUnique({ where: { slug } });
+
+        return party;
+    } catch {
+        return null;
+    }
+};
+
+
 export const getPartyBySlug = async (slug: string) => {
     try {
         const party = await db.party.findUnique({
             where: { slug },
             include: {
                 creator: {
-                    select:{
-                        name:true
+                    select: {
+                        name: true
                     }
                 },
                 participants: {
