@@ -58,9 +58,7 @@ export const MyPartyCard = ({ id, name, description, slug, isPaymentActive, valu
                     </Link>
                 </HStack>
             </CardHeader >
-            {/* <CardContent className="p-4">
-                  
-                </CardContent> */}
+            
             < CardFooter className="p-2 flex justify-center" >
                 <UpdatePartyForm  onPartyUpdated={onPartyUpdated} party={{id,slug, name, description, isPaymentActive,valueForEachParticipant}}/>
                 <AlertDialog>

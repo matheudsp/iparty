@@ -21,7 +21,7 @@ export const DialogPaymentMethod = ({ size, loading, handleFunction }: iDialogPa
 
     return (
         <Dialog>
-            <DialogTrigger>
+            <DialogTrigger asChild>
                 <Button variant={'default'} size={size}>
                     {!loading ? (
                         'Participar'

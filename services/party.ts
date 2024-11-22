@@ -74,6 +74,48 @@ export const addParticipantToParty = async (userId: string, slug: string, isPaid
     }
 }
 
+export const getLastPartiesFromUser = async (userId: string) => {
+    try {
+        const party = await db.party.findMany({
+            where: {
+                participants: { every: { userId: userId } }
+            },
+            include: {
+                creator: {
+                    select: { name: true }
+                }
+            },
+            take: 9
+        })
+
+        return party
+    } catch {
+        return null;
+    }
+}
+
+export const getLastPartiesFromCreator = async (userId: string) => {
+    try {
+        const party = await db.party.findMany({
+            where: {
+                creatorId: userId
+            },
+            include: {
+                creator: {
+                    select: { name: true }
+                }
+            },
+            take: 9
+        })
+
+        return party
+    } catch {
+        return null;
+    }
+}
+
+
+
 export const getPartiesFromCreatorByName = async (userId: string, name: string) => {
     try {
         const party = await db.party.findFirst({

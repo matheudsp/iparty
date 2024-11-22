@@ -104,7 +104,7 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
                             <FormInput
                                 control={form.control}
                                 name="description"
-                                label="Descrição"
+                                label="Descrição" 
                                 autoComplete="off"
                                 type="text"
                                 placeholder="Ex: Sem bebidas alcoólicas"

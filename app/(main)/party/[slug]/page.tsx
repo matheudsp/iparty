@@ -1,6 +1,6 @@
 "use server"
 
-import { addParticipant, findPartyBySlug } from '@/actions/party'
+import { findPartyBySlug } from '@/actions/party'
 
 import { HStack } from '@/components/ui/hstack'
 import Logo from '@/components/ui/logo'

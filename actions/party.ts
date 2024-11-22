@@ -4,7 +4,7 @@ import { z } from "zod";
 import { partySchema, profileSchema } from "@/schemas";
 import { response } from "@/lib/utils";
 import { currentUser } from "@/lib/auth";
-import { addParticipantToParty, createParty, findBySlug, getPartiesByCreator, getPartiesFromCreatorByName, getPartyById, getPartyBySlug, removeParty, updatePartyById, verifyCreatorParty, verifyParticipant } from "@/services/party";
+import { addParticipantToParty, createParty, findBySlug, getLastPartiesFromCreator, getLastPartiesFromUser, getPartiesByCreator, getPartiesFromCreatorByName, getPartyById, getPartyBySlug, removeParty, updatePartyById, verifyCreatorParty, verifyParticipant } from "@/services/party";
 
 export const newParty = async (party: z.infer<typeof partySchema>) => {
   const user = await currentUser();
@@ -51,6 +51,36 @@ export const newParty = async (party: z.infer<typeof partySchema>) => {
     message: "Party created.",
   });
 };
+
+export const getLastParties = async (
+
+) => {
+  const user = await currentUser();
+
+  if (!user) {
+    return response({
+      success: false,
+      error: {
+        code: 401,
+        message: "Unauthorized.",
+      },
+    });
+  }
+
+  const getLastPartiesEntered = await getLastPartiesFromUser(user.id)
+  const getLastPartiesCreated = await getLastPartiesFromCreator(user.id)
+
+
+  return response({
+    success: true,
+    code: 200,
+    data: {
+      LastPartiesEntered: getLastPartiesEntered,
+      LastPartiesCreated: getLastPartiesCreated
+    },
+  });
+
+}
 
 type AddParticipantResponse = {
   success: boolean;
