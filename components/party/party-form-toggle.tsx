@@ -30,7 +30,7 @@ export const PartyFormToggle = <T extends FieldValues>(props: FormToggleProps<T>
                         <FormControl>
                             <Switch
                                 checked={field.value}
-                                onCheckedChange={field.onChange}
+                                // onCheckedChange={field.onChange}
                                 disabled={isPending}
                                 {...rest}
                             />

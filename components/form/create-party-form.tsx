@@ -36,7 +36,7 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
     dialogState,
     onPartyCreated }) => {
 
-    const router = useRouter();
+    
 
     const [isPending, startTransition] = useTransition()
     const form = useForm<z.infer<typeof partySchema>>({
@@ -114,7 +114,7 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
                             <PartyFormToggle
                                 control={form.control}
                                 name="isPaymentActive"
-                                label="Aceitar pagamentos"
+                                label="Aceitar pagamentos (em desenvolvimento)"
                                 description="Receba e gerencie os valores da festa pela plataforma."
                                 isPending={isPending}
                             />

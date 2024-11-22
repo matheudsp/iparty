@@ -1,8 +1,7 @@
 
 
 import { currentUser } from "@/lib/auth";
-import { Badge } from "../ui/badge";
-import { HStack } from "../ui/hstack";
+
 import { ScrollArea } from "../ui/scroll-area";
 import {
     Table,
@@ -25,6 +24,7 @@ interface iParticipantTable {
 export async function ParticipantsTable({ isPaymentActive, participants, creatorName, creatorId }: iParticipantTable
 ) {
     const user = await currentUser()
+    console.log(participants)
     return (
         <ScrollArea className="w-full h-[52vh] md:h-[56vh]">
             <Table >
@@ -45,15 +45,15 @@ export async function ParticipantsTable({ isPaymentActive, participants, creator
 
 
                         <TableRow key={participant.id} className="w-full">
-                            <TableCell className={`font-medium`}>
-                                {participant.id === user?.id ? `${participant.user.name} (Você)` : (participant.user.name)}
+                            <TableCell className={`font-medium ${participant.userId === user?.id && 'text-blue-500'}`}>
+                                {participant.userId === user?.id ? `${participant.user.name} (Você)` : (participant.user.name)}
                             </TableCell>
-                            {isPaymentActive &&
+                            {/* {isPaymentActive &&
                                 <TableCell className={`${participant.isPaid ? "text-green-500" : "text-red-500"} text-sm font-medium `}>{participant.isPaid ? (
                                     'Pago'
                                 ) : (
                                     'Não Pago'
-                                )}</TableCell>}
+                                )}</TableCell>} */}
 
                         </TableRow>
 

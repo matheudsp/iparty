@@ -109,7 +109,7 @@ export const UpdatePartyForm: React.FC<UpdatePartyFormProps> = ({
                             <PartyFormToggle
                                 control={form.control}
                                 name="isPaymentActive"
-                                label="Aceitar pagamentos"
+                                label="Aceitar pagamentos (em desenvolvimento)"
                                 description="Receba e gerencie os valores da festa pela plataforma."
                                 isPending={isPending}
                             />

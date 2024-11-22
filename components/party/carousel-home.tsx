@@ -3,19 +3,16 @@
 import * as React from "react"
 import Autoplay from "embla-carousel-autoplay"
 
-import { Card, CardContent } from "@/components/ui/card"
 import {
     Carousel,
     CarouselContent,
     CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
 } from "@/components/ui/carousel"
 import Image from "next/image"
 
 const CarouselHome = () => {
     const plugin = React.useRef(
-        Autoplay({ delay: 2000, stopOnInteraction: true })
+        Autoplay({ delay: 4000, stopOnInteraction: true })
     )
 
     return (
@@ -27,7 +24,7 @@ const CarouselHome = () => {
         >
             <CarouselContent >
 
-                {["/banner1.png", "/banner2.png"].map((src, index) => (
+                {["/banner1.png"].map((src, index) => (
                     <CarouselItem key={index} className="relative w-full h-64">
 
                         <Image

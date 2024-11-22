@@ -76,23 +76,37 @@ export const addParticipantToParty = async (userId: string, slug: string, isPaid
 
 export const getLastPartiesFromUser = async (userId: string) => {
     try {
-        const party = await db.party.findMany({
+        const parties = await db.party.findMany({
             where: {
-                participants: { every: { userId: userId } }
+                AND: [
+                    {
+                        participants: {
+                            some: { userId: userId } // O usuário é um participante
+                        }
+                    },
+                    {
+                        creatorId: { not: userId } // O usuário não é o criador
+                    }
+                ]
             },
             include: {
                 creator: {
                     select: { name: true }
                 }
             },
+            orderBy: [
+                { createdAt: 'desc' }
+            ],
             take: 9
-        })
+        });
 
-        return party
-    } catch {
+        return parties;
+    } catch (error) {
+        console.error("Error fetching parties: ", error);
         return null;
     }
-}
+};
+
 
 export const getLastPartiesFromCreator = async (userId: string) => {
     try {
@@ -105,6 +119,9 @@ export const getLastPartiesFromCreator = async (userId: string) => {
                     select: { name: true }
                 }
             },
+            orderBy: [
+                { createdAt: 'desc' }
+            ],
             take: 9
         })
 
