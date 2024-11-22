@@ -252,11 +252,11 @@ export const findAllByCreator = async () => {
   }
 
   // Retorna as festas encontradas
-
   return response({
     success: true,
     code: 200,
-    data: parties,
+    message: "Parties fetched successfully.", // Adiciona a mensagem
+    data: parties, // Mantém os dados
   });
 };
 

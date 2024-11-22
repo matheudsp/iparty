@@ -36,7 +36,7 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
     dialogState,
     onPartyCreated }) => {
 
-    
+
 
     const [isPending, startTransition] = useTransition()
     const form = useForm<z.infer<typeof partySchema>>({
@@ -85,7 +85,7 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
                 <DialogHeader>
                     <DialogTitle>Criar festa</DialogTitle>
                     <DialogDescription>
-                        Preencha todos os campos e pressione "Criar" quando terminar.
+                    {'Preencha todos os campos e pressione "Criar" quando terminar.'}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -104,7 +104,7 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
                             <FormInput
                                 control={form.control}
                                 name="description"
-                                label="Descrição" 
+                                label="Descrição"
                                 autoComplete="off"
                                 type="text"
                                 placeholder="Ex: Sem bebidas alcoólicas"

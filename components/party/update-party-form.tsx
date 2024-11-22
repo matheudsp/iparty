@@ -81,7 +81,7 @@ export const UpdatePartyForm: React.FC<UpdatePartyFormProps> = ({
                 <DialogHeader>
                     <DialogTitle>Editar festa - {party.name}</DialogTitle>
                     <DialogDescription>
-                        Preencha todos os campos e pressione "Salvar" quando terminar.
+                       {' Preencha todos os campos e pressione "Salvar" quando terminar.'}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>

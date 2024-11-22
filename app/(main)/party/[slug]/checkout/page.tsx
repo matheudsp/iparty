@@ -18,13 +18,9 @@ export default function CheckoutPage() {
   const slug = searchParams.get("slug");
 
   const fetchClientSecret = useCallback(async () => {
-    // Create a Checkout Session
-    const response = await axios.post("/api/payment", {
-      slug: slug,
-    });
+    const response = await axios.post("/api/payment", { slug });
     return response.data.clientSecret;
-  }, []);
-
+  }, [slug]);
   const options = { fetchClientSecret };
 
   return (

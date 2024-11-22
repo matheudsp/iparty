@@ -62,7 +62,7 @@ export const addParticipantToParty = async (userId: string, slug: string, isPaid
 
         const party = await db.partyParticipant.create({
             data: {
-                partyId: findbySlug.id,
+                partyId: findbySlug!.id,
                 userId: userId,
                 isPaid: isPaid
             }
