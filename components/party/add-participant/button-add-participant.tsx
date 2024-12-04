@@ -5,7 +5,7 @@ import { Button } from "../../ui/button"
 import { useState } from "react"
 import { toast } from "sonner"
 import { LoaderPinwheel } from "../loaderSpinWheel"
-import { DialogPaymentMethod } from "./dialog-payment-method"
+import { DialogPayment } from "./dialog-payment"
 
 
 interface iButton {
@@ -18,18 +18,13 @@ interface iButton {
 export const ButtonAddParticipant = ({ partySlug, isPaymentActive, size, className }: iButton) => {
     const [loading, setLoading] = useState<boolean>(false)
 
-    const handleParticipate = async (paymentMethod?: 'Card' | 'Pix') => {
+    const handleParticipate = async () => {
         setLoading(true);
-        const response = await addParticipant(partySlug, paymentMethod);
+        const response = await addParticipant(partySlug);
 
         if (!response.success) {
             setLoading(false);
 
-            if (response.error?.code === 302) {
-                // Redirecionar para o checkout, caso necessário
-                window.location.href = `/party/${partySlug}/checkout?slug=${partySlug}`;
-                return;
-            }
 
             return toast.error(response.error?.message || "Erro desconhecido.");
         }
@@ -42,7 +37,7 @@ export const ButtonAddParticipant = ({ partySlug, isPaymentActive, size, classNa
 
     return (
         isPaymentActive ? (
-            <DialogPaymentMethod size={size} loading={loading} handleFunction={handleParticipate}/>
+            <DialogPayment size={size} loading={loading} handleFunction={handleParticipate}/>
         ) : (
             <Button variant={'default'} onClick={() => { handleParticipate() }} size={size}>
                 {!loading ? (

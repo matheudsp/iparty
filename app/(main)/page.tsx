@@ -1,10 +1,7 @@
-import { Heading } from "@/components/ui/heading";
 import { VStack } from "@/components/ui/vstack";
-import { currentUser } from "@/lib/auth";
 import { Metadata } from "next";
-
 import CarouselHome from "@/components/party/carousel-home";
-import PartyCardHome from "@/components/party/party-card-home";
+
 import { getLastParties } from "@/actions/party";
 
 export const metadata: Metadata = {
@@ -13,6 +10,7 @@ export const metadata: Metadata = {
 
 import { iParty } from "./my-parties/page";
 import PartyList from "@/components/party/party-list";
+import { useQuery } from "@tanstack/react-query";
 
 export interface iPartyHome extends iParty {
   createdAt: Date
@@ -26,7 +24,7 @@ export interface iPartyData {
   LastPartiesCreated: iPartyHome[];
 }
 
-async function fecthParties() {
+async function fetchParties() {
   const res = await getLastParties()
   if (res.success) {
     return (res.data)
@@ -37,8 +35,8 @@ async function fecthParties() {
 
 export default async function Home() {
 
-  const lastParties = await fecthParties()
-  
+  const lastParties = await fetchParties()
+
   return (
     <VStack className="w-full gap-4">
       <section className="w-full flex flex-col justify-center items-center">
@@ -49,7 +47,7 @@ export default async function Home() {
         <PartyList headingTitle="Últimas festas que você participou" lastParties={lastParties.LastPartiesEntered} />
       </section>
       <section className="flex justify-start ">
-        <PartyList headingTitle="Festas criadas por você" lastParties={lastParties.LastPartiesCreated} />
+        <PartyList ifEmptyEnableHref headingTitle="Festas criadas por você" lastParties={lastParties.LastPartiesCreated} />
       </section>
 
     </VStack>

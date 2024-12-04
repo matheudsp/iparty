@@ -35,8 +35,6 @@ model User {
   name                  String?
   email                 String?                @unique
   emailVerified         DateTime?
-  stripeCustomerId      String?                @unique
-  isActive              Boolean                @default(false)
   image                 String?
   password              String?
   accounts              Account[]
@@ -86,6 +84,7 @@ model Party {
   description             String?
   isPaymentActive         Boolean            @default(false)
   valueForEachParticipant String?
+  pixKey                  String?
   createdAt               DateTime           @default(now())
   slug                    String             @unique
   creatorId               String
@@ -97,7 +96,7 @@ model PartyParticipant {
   id      String   @id @default(cuid())
   partyId String
   userId  String
-  isPaid    Boolean? @default(false)
+  isPaid  Boolean? @default(false)
   user    User     @relation(fields: [userId], references: [id])
   party   Party    @relation(fields: [partyId], references: [id])
 

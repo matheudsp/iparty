@@ -44,7 +44,8 @@ export const newParty = async (party: z.infer<typeof partySchema>) => {
   }
 
   await createParty(user.id, { name, description, valueForEachParticipant, isPaymentActive })
-
+  
+  
   return response({
     success: true,
     code: 201,
@@ -95,7 +96,7 @@ type AddParticipantResponse = {
 
 export const addParticipant = async (
   partySlug: string,
-  paymentMethod?: 'Card' | 'Pix'
+  
 ): Promise<AddParticipantResponse> => {
   const user = await currentUser();
 
@@ -149,25 +150,9 @@ export const addParticipant = async (
   }
 
   //  Verifica se a festa requer pagamento
-  if (party.isPaymentActive && paymentMethod) {
-    if (paymentMethod === 'Card') {
-      return {
-        success: false,
-        error: {
-          code: 302, // Indica redirecionamento
-          message: "Redirecionando para o checkout...",
-        },
-      };
-    }
-    if (paymentMethod === 'Pix') {
-      return {
-        success: false,
-        error: {
-          code: 501, // Indica funcionalidade não implementada
-          message: "Pagamento via Pix ainda não implementado.",
-        },
-      };
-    }
+  if (party.isPaymentActive ) {
+   
+  
   }
 
 

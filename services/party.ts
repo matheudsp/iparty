@@ -7,15 +7,16 @@ import { z } from "zod";
 
 export const createParty = async (userId: string, party: z.infer<typeof partySchema>) => {
     const slug = await generateSlug(party.name)
-
+   
     try {
         return await db.party.create({
             data: {
                 name: party.name,
                 description: party.description,
                 valueForEachParticipant: party.valueForEachParticipant,
+                isPaymentActive: party.isPaymentActive,
                 slug: slug,
-                creatorId: userId
+                creatorId: userId,
             }
         });
     } catch {

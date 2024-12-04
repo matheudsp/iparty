@@ -52,6 +52,7 @@ export const UpdatePartyForm: React.FC<UpdatePartyFormProps> = ({
             description: party.description,
             isPaymentActive: party.isPaymentActive,
             valueForEachParticipant: party.valueForEachParticipant,
+            
         },
     });
 

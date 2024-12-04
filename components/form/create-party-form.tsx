@@ -24,6 +24,10 @@ import { Form } from "../ui/form";
 import { FormInput } from "@/components/party/form-input";
 
 import { PartyFormToggle } from "../party/party-form-toggle"
+import { FormTextarea } from "../party/form-textarea";
+
+import { FormDatePicker } from "../party/form-datepicker";
+import { Heading } from "../ui/heading";
 
 interface CreatePartyFormProps {
     onPartyCreated: () => void;
@@ -46,7 +50,7 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
             description: "",
             isPaymentActive: false,
             valueForEachParticipant: "",
-            pixKey: ""
+            pixKey: "",
         },
     });
 
@@ -81,11 +85,11 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
                 </Button>
 
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="w-full">
                 <DialogHeader>
                     <DialogTitle>Criar festa</DialogTitle>
                     <DialogDescription>
-                    {'Preencha todos os campos e pressione "Criar" quando terminar.'}
+                        {'Preencha todos os campos e pressione "Criar" quando terminar.'}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -94,53 +98,56 @@ export const CreatePartyForm: React.FC<CreatePartyFormProps> = ({
                             <FormInput
                                 control={form.control}
                                 name="name"
-                                label="Name"
+                                label="Nome"
                                 autoComplete="off"
                                 type="text"
                                 placeholder="Ex: Social na minha casa"
                                 isPending={isPending}
                             />
 
-                            <FormInput
+                            <FormTextarea
                                 control={form.control}
                                 name="description"
                                 label="Descrição"
                                 autoComplete="off"
-                                type="text"
                                 placeholder="Ex: Sem bebidas alcoólicas"
                                 isPending={isPending}
                             />
+                            <div>
+                                <PartyFormToggle
+                                    control={form.control}
+                                    name="isPaymentActive"
+                                    label="Aceitar pagamentos"
+                                    description="Habilite receber pagamentos pela plataforma."
+                                    isPending={isPending}
+                                />
+                                {form.watch("isPaymentActive") && (
+                                    <div className="p-3 rounded-md bg-gray-100 space-y-2">
 
-                            <PartyFormToggle
-                                control={form.control}
-                                name="isPaymentActive"
-                                label="Aceitar pagamentos (em desenvolvimento)"
-                                description="Receba e gerencie os valores da festa pela plataforma."
-                                isPending={isPending}
-                            />
-                            {form.watch("isPaymentActive") && (
-                                <>
-                                    <FormInput
-                                        control={form.control}
-                                        name="valueForEachParticipant"
-                                        label="Cada participante pagará"
-                                        autoComplete="off"
-                                        type="number"
-                                        placeholder="Ex: 25,00"
+                                        <FormInput
+                                            control={form.control}
+                                            name="valueForEachParticipant"
+                                            label="Cada participante pagará"
+                                            autoComplete="off"
+                                            type="number"
+                                            placeholder="Ex: 25,00"
 
-                                        isPending={isPending}
-                                    />
-                                    <FormInput
-                                        control={form.control}
-                                        name="pixKey"
-                                        label="Chave PIX"
-                                        autoComplete="off"
-                                        type="number"
-                                        placeholder="Sua chave PIX"
-                                        isPending={isPending}
-                                    />
-                                </>
-                            )}
+                                            isPending={isPending}
+                                        />
+                                        <FormInput
+                                            control={form.control}
+                                            name="pixKey"
+                                            label="Chave PIX"
+                                            autoComplete="off"
+                                            type="text"
+                                            placeholder="Sua chave PIX"
+                                            isPending={isPending}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+
                         </div>
 
                         <DialogFooter className="pt-4 flex items-end">

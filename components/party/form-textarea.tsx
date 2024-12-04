@@ -1,10 +1,10 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+
 import { cn } from "@/lib/utils";
 import { Control, FieldValues, Path } from "react-hook-form";
+import { Textarea } from "../ui/textarea";
 
-
-type FormInputProps<T extends FieldValues> = React.ComponentPropsWithRef<"input"> & {
+type FormTextareaProps<T extends FieldValues> = React.ComponentPropsWithRef<"input"> & {
   control: Control<T>;
   name: Path<T>;
   label: string;
@@ -12,7 +12,7 @@ type FormInputProps<T extends FieldValues> = React.ComponentPropsWithRef<"input"
   
 };
 
-export const FormInput = <T extends FieldValues>(props: FormInputProps<T>) => {
+export const FormTextarea = <T extends FieldValues>(props: FormTextareaProps<T>) => {
   const { control, name, label, isPending, disabled, ...rest } = props;
   return (
     <FormField
@@ -25,12 +25,14 @@ export const FormInput = <T extends FieldValues>(props: FormInputProps<T>) => {
           <FormControl className="flex-col col-span-4 ">
             <>
 
-              <Input
+              <Textarea
                 {...field}
                 {...rest}
                 className={`${cn(fieldState.error && "border-red-500")} col-span-4  `}
                 disabled={isPending || disabled}
               />
+
+
 
               <FormMessage className="text-xs col-span-4" />
             </>
